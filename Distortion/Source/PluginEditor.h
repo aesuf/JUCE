@@ -31,6 +31,8 @@ private:
 
     juce::Slider driveSlider;
     juce::ComboBox typeBox;
+    juce::Slider bitSlider;
+    juce::Slider foldSlider;
 
     // Attachment namespace to cleanup code
     using SliderAttachments = juce::AudioProcessorValueTreeState::SliderAttachment;
@@ -41,6 +43,10 @@ private:
     using BoxAttachments = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
 
     std::unique_ptr<BoxAttachments> typeBoxAttachment;
+
+    std::unique_ptr<SliderAttachments> bitSliderAttachment;
+
+    std::unique_ptr<SliderAttachments> foldSliderAttachment;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

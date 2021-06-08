@@ -152,6 +152,12 @@ void DistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     auto type = apvts.getRawParameterValue("TYPE");
     type->load();
 
+    auto bitNum = apvts.getRawParameterValue("BITS");
+    bitNum->load();
+
+    auto fold = apvts.getRawParameterValue("FOLD");
+    fold->load();
+
 
     //float drive1 = drive->load();
 
@@ -173,6 +179,19 @@ void DistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
+
+        //User parameters
+        int N = *bitNum;										// undersampling integer factor
+
+            // State variables
+        auto cpt = 0;
+
+        // Processing
+        for (auto i = 0; i < buffer.getNumSamples(); i++)
+        {
+            channelData[i] = (cpt == 0 ? channelData[i] : 0.f);
+            cpt = (cpt + 1) % N;
+        }
         
 
         if (*type == 0.0)
@@ -197,12 +216,22 @@ void DistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             }
         }
         else
-            for (auto sample = 0; sample < buffer.getNumSamples(); sample += 2)
+        {
+            for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
-                float val = channelData[sample];
-                channelData[sample] = (2.f / juce::float_Pi) * atan(val * *drive);
+                float val = channelData[i] * *drive;
+
+                channelData[i] = juce::jlimit(-1.0f, 1.0f, val);
+
 
             }
+        }
+        for (auto i = 0; i < buffer.getNumSamples(); i++)
+        {
+            float val = channelData[i];
+            float num = *fold;
+            channelData[i] = std::sin(val + juce::float_Pi*num);
+        }
         
         
     }
@@ -249,7 +278,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistortionAudioProcessor::cr
 
     //juce::StringArray typearray;
     //typearray = { "ArcTan", "Tape", "Hard" };
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TYPE", "Type", 0, 2, 0));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TYPE", "Type", 0.0f, 2.0f, 0.0f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("BITS", "Bits", 1.0f, 24.0f, 1.0f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FOLD", "Fold", 0.0f, 2.0f, 0.0f));
 
     return { params.begin(), params.end() };
 
