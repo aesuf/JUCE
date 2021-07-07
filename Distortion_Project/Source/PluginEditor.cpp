@@ -15,7 +15,8 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
 {
     //Set GUI element parameters	
     driveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    driveSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 50, 25);
+    driveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 2) + 5 - (25/2))), true, 50, 25);
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::transparentWhite);
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
     clipSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
