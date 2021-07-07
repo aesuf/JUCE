@@ -13,12 +13,12 @@
 //==============================================================================
 /**
 */
-class SimpleDistortionAudioProcessor  : public juce::AudioProcessor
+class Distortion_ProjectAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    SimpleDistortionAudioProcessor();
-    ~SimpleDistortionAudioProcessor() override;
+    Distortion_ProjectAudioProcessor();
+    ~Distortion_ProjectAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -58,5 +58,5 @@ public:
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDistortionAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Distortion_ProjectAudioProcessor)
 };
