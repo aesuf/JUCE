@@ -138,6 +138,7 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     //Load variables from APVTS
     auto drive = apvts.getRawParameterValue("DRIVE");
     drive->load();
+  
 
     auto type = apvts.getRawParameterValue("TYPE");
     type->load();
