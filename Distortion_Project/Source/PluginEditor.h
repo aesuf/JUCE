@@ -14,14 +14,18 @@
 //==============================================================================
 /**
 */
+
+// Derived class from LookAndFeel_V4
 class OtherLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
 
     /** Creates a LookAndFeel_V4 object with a default colour scheme. */
+    // Default Constructor
     OtherLookAndFeel();
 
     /** Creates a LookAndFeel_V4 object with a given colour scheme. */
+    // Custom Constructor
     OtherLookAndFeel(ColourScheme);
 
     /** Destructor. */
@@ -47,13 +51,12 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    
-
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     Distortion_ProjectAudioProcessor& audioProcessor;
 
+    // LookandFeel classes need to be implemented before the component
     OtherLookAndFeel otherLookAndFeel;
 
     //Create GUI objects
@@ -61,12 +64,11 @@ private:
     juce::ComboBox typeBox;
     juce::Slider clipSlider;
 
+    // Create Label Objects
     juce::Label titleLabel;
-    juce::Label NameLabel;
+    juce::Label NameLabel;    
 
-    
-
-    // Use namespaces to cleanup code
+    // Use namespaces to cleanup code for TreeState Attachments
     using SliderAttachments = juce::AudioProcessorValueTreeState::SliderAttachment;
     using BoxAttachments = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
 
