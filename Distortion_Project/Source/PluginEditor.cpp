@@ -92,7 +92,8 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     g.setColour(juce::Colours::whitesmoke);
     g.setFont(20.0f);
 
-    // Text for Sliders (Should change these to labels!!)
+    // Text for Sliders 
+    // **********************************(Should change these to labels!!)**********************************************
     g.drawText("DRIVE", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 2) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
     g.drawText("CLIP", ((getWidth() / 5) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
 
