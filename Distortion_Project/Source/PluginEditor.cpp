@@ -59,6 +59,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     // Add items to ComboBox
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
+    typeBox.addItem("Chebyshev", 3);
     typeBox.setJustificationType(juce::Justification::centred);  
 
     // Add components to GUI	

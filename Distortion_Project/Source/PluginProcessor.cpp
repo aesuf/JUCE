@@ -201,16 +201,16 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
                 channelData[i] = juce::jlimit(-1 * clipNormal.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val);
             }
         }
-        /*
         //Chebyshev
-        else if (*type == 2.0)
+        else if (typeNormal == 2.0)
         {
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
-                float val = channelData[i] * *drive;
-                channelData[i] = (4 * pow(val,3) - 3 * val) + (2 * pow(val,2) - 1) + val + 1;
+                float val = channelData[i] * driveNormal.getCurrentValue();
+                val = (4 * pow(val, 3) - 3 * val) + (2 * pow(val, 2) - 1) + val + 1;
+                channelData[i] = juce::jlimit(-1.f,1.f,val);
             }
-        }*/
+        }
     }
     outGainNormal.applyGain(buffer, buffer.getNumSamples());
     visualiser.pushBuffer(buffer);
@@ -325,6 +325,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
     juce::StringArray choices;
     choices.add("Soft");
     choices.add("Hard");
+    choices.add("Chebyshev");
 
     auto typeParam = std::make_unique<juce::AudioParameterChoice>("TYPE", "Type", choices, 0, "Type", valueToTextFunction, textToValueFunction);
 
