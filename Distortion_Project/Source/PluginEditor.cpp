@@ -14,10 +14,29 @@
 Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (Distortion_ProjectAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
+    
     // General Font and Colour Settings
     getLookAndFeel().setDefaultSansSerifTypefaceName("Roboto");
     getLookAndFeel().setColour(juce::Slider::textBoxTextColourId, juce::Colours::antiquewhite);
     getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::transparentWhite);
+
+    // inGainSlider Colours
+    inGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    inGainSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    inGainSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // inGainSliderStyle and position
+    inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    inGainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+
+    // outGainSlider Colours
+    outGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    outGainSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    outGainSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // outGainSlider Style and position
+    outGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    outGainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 2 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
 
     // driveSlider Colours
     driveSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
@@ -26,7 +45,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
 
     // driveSlider Style and position
     driveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    driveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);	
+    driveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 2 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);	
 
     // clipSlider Colours
     clipSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
@@ -35,30 +54,49 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     
     // clipSlider Style and position
     clipSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    clipSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 50, 25);
+    clipSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
     
     // Add items to ComboBox
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
-    typeBox.setJustificationType(juce::Justification::centred);
+    typeBox.setJustificationType(juce::Justification::centred);  
 
     // Add components to GUI	
     addAndMakeVisible(driveSlider);
     addAndMakeVisible(clipSlider);
+    addAndMakeVisible(inGainSlider);
+    addAndMakeVisible(outGainSlider);
     addAndMakeVisible(&typeBox);
     addAndMakeVisible(titleLabel);
     addAndMakeVisible(NameLabel);
+    addAndMakeVisible(audioProcessor.visualiser);
+
     
     // Add Listeners 
+    inGainSlider.addListener(this);
+    outGainSlider.addListener(this);
     driveSlider.addListener(this);
     clipSlider.addListener(this); 
-    typeBox.addListener(this); //typeBox requires listener	
+    typeBox.addListener(this); //typeBox requires listener
+
+
+    //
+    driveSlider.addMouseListener(this, false);
     
     // Use custom lookandfeel 
+    inGainSlider.setLookAndFeel(&otherLookAndFeel);
+    outGainSlider.setLookAndFeel(&otherLookAndFeel);
     driveSlider.setLookAndFeel(&otherLookAndFeel);
     clipSlider.setLookAndFeel(&otherLookAndFeel);
 
-    //Conect GUI object attachments to plugin processor	
+    //Pimpl(Slider & s, SliderStyle sliderStyle, TextEntryBoxPosition textBoxPosition)
+    
+
+    //Conect GUI object attachments to plugin processor
+    inGainSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "INGAIN", inGainSlider);
+    outGainSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "OUTGAIN", outGainSlider);
     driveSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "DRIVE", driveSlider);
     typeBoxAttachment = std::make_unique<BoxAttachments>(audioProcessor.apvts,
@@ -68,12 +106,14 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
 
     // Make sure that before the constructor has finished, you've set the	
     // editor's size to whatever you need it to be.	
-    setSize(600, 400);
+    setSize(800, 600);
 }
 
 // Editor Destructor
 Distortion_ProjectAudioProcessorEditor::~Distortion_ProjectAudioProcessorEditor()
 {
+    inGainSlider.setLookAndFeel(nullptr);
+    outGainSlider.setLookAndFeel(nullptr);
     driveSlider.setLookAndFeel(nullptr);
     clipSlider.setLookAndFeel(nullptr);
 }
@@ -84,7 +124,7 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     // Color Gradient for Background
     juce::Colour colorAqua = juce::Colour(0.52f, 0.4f, 0.2f, 0.8f);
     juce::Colour colorBlack = juce::Colours::black;
-    juce::ColourGradient g1 = juce::ColourGradient(colorAqua, 0.0f, 0.0f, colorBlack.brighter(0.2f), static_cast<int>(getRight()), static_cast<int>(getBottom()), true);
+    juce::ColourGradient g1 = juce::ColourGradient(colorAqua, 0.0f, 0.0f, colorBlack.brighter(0.2f), static_cast<float>(getRight()), static_cast<float>(getBottom()), true);
     g.setGradientFill(g1);
     g.fillAll();
 
@@ -94,8 +134,12 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 
     // Text for Sliders 
     // **********************************(Should change these to labels!!)**********************************************
-    g.drawText("DRIVE", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 2) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIP", ((getWidth() / 5) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("INGAIN", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
+    g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIP", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    
+    
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
@@ -105,6 +149,8 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     NameLabel.setFont(juce::Font(25.0f, juce::Font::bold));
     NameLabel.setText("T A K E 1", juce::dontSendNotification);
     NameLabel.setJustificationType(juce::Justification::left);
+
+
     
 }
 
@@ -112,9 +158,13 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 void Distortion_ProjectAudioProcessorEditor::resized()
 {   
     // Slider Bounds
-    driveSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2), 
-        (getHeight() / 2) - (100 / 2), 100, 100);
-    clipSlider.setBounds(((getWidth() / 5) * 3) - (100 / 2), 
+    inGainSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+        (getHeight() / 4) - (100 / 2), 100, 100);
+    driveSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2),
+        (getHeight() / 4) - (100 / 2), 100, 100);
+    clipSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+        (getHeight() / 2) - (100 / 2), 100, 100);  
+    outGainSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2), 
         (getHeight() / 2) - (100 / 2), 100, 100);
 
     // ComboBox Bounds
@@ -124,30 +174,41 @@ void Distortion_ProjectAudioProcessorEditor::resized()
     // Label Bounds
     titleLabel.setBounds(10, 10, getWidth() - 20, 30);
     NameLabel.setBounds(10, 10, getWidth() - 20, 30);
+
+    audioProcessor.visualiser.setBounds(getWidth()-getWidth()/2, 100, getWidth() / 3, 150);
 }
 
 // Listener Function for ComboBox (Code is purposefully empty...)
 void Distortion_ProjectAudioProcessorEditor::comboBoxChanged(juce::ComboBox* box)
 {
+    ignoreUnused(box);
 }
 
 // Listener function for Slider
 void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* slide)
 {
+    ignoreUnused(slide);
     // Get Values of sliders
-    float driveValue = driveSlider.getValue()/10.0;
-    float clipValue = clipSlider.getValue();
-
+    float driveValue = static_cast<float>(((driveSlider.getValue()/100.0)*0.2)+0.5);
+    float clipValue = static_cast<float>(((clipSlider.getValue()+ 40.0)/40.0) * 0.2 + 0.5);
+    float inGainValue = static_cast<float>(((inGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float outGainValue = static_cast<float>(((outGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
     // Limit Brightness between specific range
-    float driveBrightness = juce::jlimit(0.5f, 0.7f, driveValue); 
-    float clipBrightness = juce::jlimit(0.5f, 0.7f, clipValue);
+    //float driveBrightness = juce::jlimit(0.5f, 0.7f, driveValue); 
+    //float clipBrightness = juce::jlimit(0.5f, 0.7f, clipValue);
+    //float inGainBrightness = juce::jlimit(0.5f, 0.7f, inGainValue);
+    //float outGainBrightness = juce::jlimit(0.5f, 0.7f, outGainValue);
 
     // Set Brightness Parameter of the Colour
     // Colour(float Hue, float Saturation, float Brightness, float Alpha)
     driveSlider.setColour(juce::Slider::rotarySliderFillColourId, 
-        juce::Colour::Colour(0.52f, 0.4f, driveBrightness, 1.0f));
+        juce::Colour::Colour(0.52f, 0.4f, driveValue, 1.0f));
     clipSlider.setColour(juce::Slider::rotarySliderFillColourId, 
-        juce::Colour::Colour(0.52f, 0.4f,clipBrightness, 1.0f)); 
+        juce::Colour::Colour(0.52f, 0.4f,clipValue, 1.0f));
+    inGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, inGainValue, 1.0f));
+    outGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, outGainValue, 1.0f));
     
 }
 
@@ -211,7 +272,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
 
         // Set the colour of the Ellipse to be drawn
         // Colour(float Hue, float Saturation, float Brightness, float Alpha)
-        g.setColour(juce::Colour::Colour(0.52f, 0.4f, 0.2f, 0.4f));
+        g.setColour(juce::Colour::Colour(0.52f, 0.4f, 0.19f, 0.6f));
 
         // Set the bounds of the ellipse to be just inside the arc line of the slider
         // This is the bounds of the slider reduced by the linewidth (see the beginning of this function)
@@ -232,3 +293,40 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
     g.fillEllipse(juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
 }
 
+mySlider::mySlider()
+{
+}
+
+mySlider::~mySlider()
+{
+}
+
+void mySlider::mouseDown(const juce::MouseEvent& e)
+{
+    if (juce::ModifierKeys::getCurrentModifiers().isRightButtonDown())
+    {
+        juce::PopupMenu m;
+        m.addItem(1, "Do something Here");
+        //m.addItem(2, "item 2");
+
+        const int result = m.show();
+
+        if (result == 0)
+        {
+            // user dismissed the menu without picking anything
+        }
+        else if (result == 1)
+        {
+            // user picked item 1
+        }
+        else if (result == 2)
+        {
+            // user picked item 2
+        }
+    }
+    else
+    {       
+        Slider::mouseDown(e);
+    }
+   
+}

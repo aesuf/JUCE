@@ -13,12 +13,28 @@
 //==============================================================================
 /**
 */
-class Distortion_ProjectAudioProcessor  : public juce::AudioProcessor
+class Visualiser : public juce::AudioVisualiserComponent
+{
+public:
+    Visualiser() : AudioVisualiserComponent(2)
+    {
+        setBufferSize(128);
+        setSamplesPerBlock(16);
+        setColours(juce::Colours::dimgrey, juce::Colours::antiquewhite);
+        setRepaintRate(16);
+    }
+private:
+};
+
+class Distortion_ProjectAudioProcessor  : public juce::AudioProcessor,
+                                          public juce::ValueTree::Listener
 {
 public:
     //==============================================================================
     Distortion_ProjectAudioProcessor();
     ~Distortion_ProjectAudioProcessor() override;
+
+   
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -53,10 +69,32 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    juce::AudioProcessorValueTreeState apvts; //Create APVTS object to connect to editor
+    //==============================================================================
+    void init(); // Called once -- give initial values to DSP
+    void prepare(double sampleRate, int samplesPerBlock); // Pass sample rate/buffer size to DSP
+    void update(); // Update DSP when a user changes parameters
+    void reset() override; // Reset DSP parameters
 
-private:
+    juce::AudioProcessorValueTreeState apvts; //Create APVTS object to connect to editor
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    Visualiser visualiser;
+private:    
+    bool isActive{ false };
+    bool mustUpdateProcessing{ false };
+    float typeNormal { 0.0 };
+    juce::LinearSmoothedValue<float> inGainNormal{ 0.0 };
+    juce::LinearSmoothedValue<float> outGainNormal { 0.0 };
+    juce::LinearSmoothedValue<float> driveNormal { 0.0 };
+    juce::LinearSmoothedValue<float> clipNormal { 0.0 };
+
+    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override
+    {
+        ignoreUnused(property);
+        ignoreUnused(treeWhosePropertyHasChanged);
+        // Detect when a user changes params
+        mustUpdateProcessing = true;
+    }
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Distortion_ProjectAudioProcessor)
 };
