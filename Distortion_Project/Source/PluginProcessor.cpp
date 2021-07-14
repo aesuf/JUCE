@@ -176,8 +176,6 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     //driveNormal.applyGain(buffer, buffer.getNumSamples());
     //clipNormal.applyGain(buffer, buffer.getNumSamples());
     inGainNormal.applyGain(buffer, buffer.getNumSamples());
-    
-
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
