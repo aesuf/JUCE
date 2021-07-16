@@ -56,6 +56,15 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     clipSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     clipSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
     
+    // clipSliderNeg Colours added for experimentation 
+    clipSliderNeg.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    clipSliderNeg.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    clipSliderNeg.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // clipSliderNeg Style and position
+    clipSliderNeg.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    clipSliderNeg.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+
     // Add items to ComboBox
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
@@ -71,6 +80,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     addAndMakeVisible(titleLabel);
     addAndMakeVisible(NameLabel);
     addAndMakeVisible(audioProcessor.visualiser);
+    addAndMakeVisible(clipSliderNeg);
 
     
     // Add Listeners 
@@ -78,6 +88,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     outGainSlider.addListener(this);
     driveSlider.addListener(this);
     clipSlider.addListener(this); 
+    clipSliderNeg.addListener(this);
     typeBox.addListener(this); //typeBox requires listener
 
 
@@ -89,11 +100,12 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     outGainSlider.setLookAndFeel(&otherLookAndFeel);
     driveSlider.setLookAndFeel(&otherLookAndFeel);
     clipSlider.setLookAndFeel(&otherLookAndFeel);
+    clipSliderNeg.setLookAndFeel(&otherLookAndFeel);
 
     //Pimpl(Slider & s, SliderStyle sliderStyle, TextEntryBoxPosition textBoxPosition)
     
 
-    //Conect GUI object attachments to plugin processor
+    //Connect GUI object attachments to plugin processor
     inGainSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "INGAIN", inGainSlider);
     outGainSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
@@ -104,6 +116,9 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
         "TYPE", typeBox);
     clipSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "CLIP", clipSlider);
+    //added for experimentation 
+    clipSliderNegAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "CLIPNEG", clipSliderNeg);
 
     // Make sure that before the constructor has finished, you've set the	
     // editor's size to whatever you need it to be.	
@@ -117,6 +132,7 @@ Distortion_ProjectAudioProcessorEditor::~Distortion_ProjectAudioProcessorEditor(
     outGainSlider.setLookAndFeel(nullptr);
     driveSlider.setLookAndFeel(nullptr);
     clipSlider.setLookAndFeel(nullptr);
+    clipSliderNeg.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -139,7 +155,7 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
     g.drawText("CLIP", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    
+    g.drawText("CLIPNEG", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
     
 
     // Label for Name of our Organization
@@ -167,6 +183,8 @@ void Distortion_ProjectAudioProcessorEditor::resized()
         (getHeight() / 2) - (100 / 2), 100, 100);  
     outGainSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2), 
         (getHeight() / 2) - (100 / 2), 100, 100);
+    clipSliderNeg.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+        (getHeight() / 1.4) - (100 / 2), 100, 100);
 
     // ComboBox Bounds
     juce::Rectangle<int> area = getLocalBounds().reduced(60);
@@ -194,6 +212,7 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
     float clipValue = static_cast<float>(((clipSlider.getValue()+ 40.0)/40.0) * 0.2 + 0.5);
     float inGainValue = static_cast<float>(((inGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
     float outGainValue = static_cast<float>(((outGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float clipValueNeg = static_cast<float>(((clipSliderNeg.getValue() + 40.0) / 20.0) * 0.2 + 0.5);
     // Limit Brightness between specific range
     //float driveBrightness = juce::jlimit(0.5f, 0.7f, driveValue); 
     //float clipBrightness = juce::jlimit(0.5f, 0.7f, clipValue);
@@ -210,7 +229,8 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
         juce::Colour::Colour(0.52f, 0.4f, inGainValue, 1.0f));
     outGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
         juce::Colour::Colour(0.52f, 0.4f, outGainValue, 1.0f));
-    
+    clipSliderNeg.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, clipValueNeg, 1.0f));
 }
 
 // Default Constructor

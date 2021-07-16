@@ -86,6 +86,7 @@ private:
     juce::LinearSmoothedValue<float> outGainNormal { 0.0 };
     juce::LinearSmoothedValue<float> driveNormal { 0.0 };
     juce::LinearSmoothedValue<float> clipNormal { 0.0 };
+    juce::LinearSmoothedValue<float> clipNeg{ 0.0 };
 
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override
     {

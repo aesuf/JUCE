@@ -196,9 +196,10 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
                 float val = channelData[i] * driveNormal.getCurrentValue();
-                channelData[i] = juce::jlimit(-1 * clipNormal.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val);
+                channelData[i] = juce::jlimit(-1 * clipNeg.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val);
             }
         }
+      
         //Chebyshev
         else if (typeNormal == 2.0)
         {
@@ -274,6 +275,10 @@ void Distortion_ProjectAudioProcessor::update()
     auto clip = apvts.getRawParameterValue("CLIP");
     clipNormal = juce::Decibels::decibelsToGain(clip->load());
 
+    auto clipneg = apvts.getRawParameterValue("CLIPNEG");
+    clipNeg = juce::Decibels::decibelsToGain(clipneg->load());
+
+
     auto inGain = apvts.getRawParameterValue("INGAIN");
     inGainNormal.setTargetValue(juce::Decibels::decibelsToGain(inGain->load()));
 
@@ -287,6 +292,7 @@ void Distortion_ProjectAudioProcessor::reset()
     clipNormal.reset(getSampleRate(), 0.050);
     inGainNormal.reset(getSampleRate(), 0.050);
     outGainNormal.reset(getSampleRate(), 0.050);
+    clipNeg.reset(getSampleRate(), 0.050);
     visualiser.clear();
 }
 
@@ -319,6 +325,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
         juce::NormalisableRange<float>(0.0f, 100.0f, 0.1f), 20.0f, "%", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     auto clipParam = std::make_unique<juce::AudioParameterFloat>("CLIP", "Threshold",
         juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+    auto clipParamNeg = std::make_unique<juce::AudioParameterFloat>("CLIPNEG", "Threshold",
+        juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+
 
     juce::StringArray choices;
     choices.add("Soft");
@@ -332,6 +341,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
     params.push_back(std::move(driveParam));
     params.push_back(std::move(clipParam));
     params.push_back(std::move(typeParam));
+    params.push_back(std::move(clipParamNeg));
 
     
     
