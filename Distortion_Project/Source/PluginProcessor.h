@@ -86,7 +86,15 @@ private:
     juce::LinearSmoothedValue<float> outGainNormal { 0.0 };
     juce::LinearSmoothedValue<float> driveNormal { 0.0 };
     juce::LinearSmoothedValue<float> clipNormal { 0.0 };
-
+    
+    //filter variables
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> hiPassCutoffFrequency{};
+    juce::LinearSmoothedValue<float> qHigh{ 0.0 };
+    juce::IIRFilter highPass = juce::IIRFilter::IIRFilter();
+    juce::IIRFilter lowPass = juce::IIRFilter::IIRFilter();
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> lowPassCutoffFrequency{};
+    
+    
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override
     {
         ignoreUnused(property);

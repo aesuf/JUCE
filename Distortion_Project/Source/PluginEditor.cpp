@@ -55,7 +55,34 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     // clipSlider Style and position
     clipSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     clipSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
+    // qSlider Colours
+    qSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    qSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    qSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // qslider Style and position
+    qSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    qSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 4 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
     
+    // highFreqSlider Colours
+    highFreqSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    highFreqSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    highFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // highFreqSlider Style and position
+    highFreqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    highFreqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 3 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
+
+    // lowFreqSlider Colours
+    lowFreqSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    lowFreqSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    lowFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
+    // lowFreqSlider Style and position
+    lowFreqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    lowFreqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 6) + 5 - (25 / 2))), true, 50, 25);
+
+
     // Add items to ComboBox
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
@@ -67,6 +94,9 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     addAndMakeVisible(clipSlider);
     addAndMakeVisible(inGainSlider);
     addAndMakeVisible(outGainSlider);
+    addAndMakeVisible(qSlider);
+    addAndMakeVisible(highFreqSlider);
+    addAndMakeVisible(lowFreqSlider);
     addAndMakeVisible(&typeBox);
     addAndMakeVisible(titleLabel);
     addAndMakeVisible(NameLabel);
@@ -78,6 +108,9 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     outGainSlider.addListener(this);
     driveSlider.addListener(this);
     clipSlider.addListener(this); 
+    qSlider.addListener(this);
+    highFreqSlider.addListener(this);
+    lowFreqSlider.addListener(this);
     typeBox.addListener(this); //typeBox requires listener
 
 
@@ -89,7 +122,9 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     outGainSlider.setLookAndFeel(&otherLookAndFeel);
     driveSlider.setLookAndFeel(&otherLookAndFeel);
     clipSlider.setLookAndFeel(&otherLookAndFeel);
-
+    qSlider.setLookAndFeel(&otherLookAndFeel);
+    highFreqSlider.setLookAndFeel(&otherLookAndFeel);
+    lowFreqSlider.setLookAndFeel(&otherLookAndFeel);
     //Pimpl(Slider & s, SliderStyle sliderStyle, TextEntryBoxPosition textBoxPosition)
     
 
@@ -104,6 +139,12 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
         "TYPE", typeBox);
     clipSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "CLIP", clipSlider);
+    qSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "Q", qSlider);
+    highFreqSlideAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "HIGHFREQCUTOFF", highFreqSlider);
+    lowFreqSlideAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "LOWFREQCUTOFF", lowFreqSlider);
 
     // Make sure that before the constructor has finished, you've set the	
     // editor's size to whatever you need it to be.	
@@ -117,6 +158,9 @@ Distortion_ProjectAudioProcessorEditor::~Distortion_ProjectAudioProcessorEditor(
     outGainSlider.setLookAndFeel(nullptr);
     driveSlider.setLookAndFeel(nullptr);
     clipSlider.setLookAndFeel(nullptr);
+    qSlider.setLookAndFeel(nullptr);
+    highFreqSlider.setLookAndFeel(nullptr);
+    lowFreqSlider.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -139,8 +183,9 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
     g.drawText("CLIP", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    
-    
+    g.drawText("Q", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("HIGHFREQCUTOFF", ((getWidth() / 5) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("LOWFREQCUTOFF", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1) + 5, 100, 100, juce::Justification::centred, false);
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
@@ -148,7 +193,7 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 
     // Label for Name of Plugin
     NameLabel.setFont(juce::Font(25.0f, juce::Font::bold));
-    NameLabel.setText("T A K E 1", juce::dontSendNotification);
+    NameLabel.setText("T A K E 2", juce::dontSendNotification);
     NameLabel.setJustificationType(juce::Justification::left);
 
 
@@ -167,6 +212,12 @@ void Distortion_ProjectAudioProcessorEditor::resized()
         (getHeight() / 2) - (100 / 2), 100, 100);  
     outGainSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2), 
         (getHeight() / 2) - (100 / 2), 100, 100);
+    qSlider.setBounds(((getWidth() / 5) * 4) - (100 / 2),
+        (getHeight() / 2) - (100 / 2), 100, 100);
+    highFreqSlider.setBounds(((getWidth() / 5) * 3) - (100 / 2),
+        (getHeight() / 2) - (100 / 2), 100, 100);
+    lowFreqSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+        (getHeight() / 1) - (100 / 2), 100, 100);
 
     // ComboBox Bounds
     juce::Rectangle<int> area = getLocalBounds().reduced(60);
@@ -194,6 +245,9 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
     float clipValue = static_cast<float>(((clipSlider.getValue()+ 40.0)/40.0) * 0.2 + 0.5);
     float inGainValue = static_cast<float>(((inGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
     float outGainValue = static_cast<float>(((outGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float qValue = static_cast<float>(outGainSlider.getValue());
+    float highPassFreqValue = static_cast<float>(highFreqSlider.getValue());
+    float lowPassFreqValue = static_cast<float>(lowFreqSlider.getValue());
     // Limit Brightness between specific range
     //float driveBrightness = juce::jlimit(0.5f, 0.7f, driveValue); 
     //float clipBrightness = juce::jlimit(0.5f, 0.7f, clipValue);
@@ -210,7 +264,12 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
         juce::Colour::Colour(0.52f, 0.4f, inGainValue, 1.0f));
     outGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
         juce::Colour::Colour(0.52f, 0.4f, outGainValue, 1.0f));
-    
+    qSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, inGainValue, 1.0f));
+    highFreqSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, highPassFreqValue, 1.0f));
+    lowFreqSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, lowPassFreqValue, 1.0f));
 }
 
 // Default Constructor
