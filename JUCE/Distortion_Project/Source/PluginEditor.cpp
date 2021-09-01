@@ -132,14 +132,14 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     typeBoxAttachment = std::make_unique<BoxAttachments>(audioProcessor.apvts,
         "TYPE", typeBox);
     clipSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
-        "CLIP", clipSlider);
+        "CLIPPOS", clipSlider);
     //added for experimentation 
     clipSliderNegAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "CLIPNEG", clipSliderNeg);
     highPassSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
-        "HIGH", highPassSlider);
+        "HIGH(Hz)", highPassSlider);
     lowPassSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
-        "LOW", lowPassSlider);
+        "LOW(Hz)", lowPassSlider);
 
     // Make sure that before the constructor has finished, you've set the	
     // editor's size to whatever you need it to be.	
@@ -176,11 +176,11 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     // **********************************(Should change these to labels!!)**********************************************
     g.drawText("INGAIN", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
     g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIP", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIPPOS", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("CLIPNEG", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("HIGH", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("LOW", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("HIGH(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("LOW(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
@@ -188,7 +188,7 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 
     // Label for Name of Plugin
     NameLabel.setFont(juce::Font(25.0f, juce::Font::bold));
-    NameLabel.setText("T A K E 1", juce::dontSendNotification);
+    NameLabel.setText("Distortion Multieffect", juce::dontSendNotification);
     NameLabel.setJustificationType(juce::Justification::left);
 
 

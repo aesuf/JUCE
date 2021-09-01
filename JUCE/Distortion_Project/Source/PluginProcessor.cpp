@@ -290,7 +290,7 @@ void Distortion_ProjectAudioProcessor::update()
     auto type = apvts.getRawParameterValue("TYPE");
     typeNormal = type->load();
 
-    auto clip = apvts.getRawParameterValue("CLIP");
+    auto clip = apvts.getRawParameterValue("CLIPPOS");
     clipNormal = juce::Decibels::decibelsToGain(clip->load());
 
     auto clipneg = apvts.getRawParameterValue("CLIPNEG");
@@ -303,9 +303,9 @@ void Distortion_ProjectAudioProcessor::update()
     auto outGain = apvts.getRawParameterValue("OUTGAIN");
     outGainNormal.setTargetValue(juce::Decibels::decibelsToGain(outGain->load()));
    //filter stuff
-    auto high = apvts.getRawParameterValue("HIGH");
+    auto high = apvts.getRawParameterValue("HIGH(Hz)");
     highPass.setCutoffFrequency(high->load());
-    auto low = apvts.getRawParameterValue("LOW");
+    auto low = apvts.getRawParameterValue("LOW(Hz)");
     lowPass.setCutoffFrequency(low->load());
 }
 
@@ -349,14 +349,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
 
     auto driveParam = std::make_unique<juce::AudioParameterFloat>("DRIVE", "Drive",
         juce::NormalisableRange<float>(0.0f, 100.0f, 0.1f), 20.0f, "%", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
-    auto clipParam = std::make_unique<juce::AudioParameterFloat>("CLIP", "Threshold",
+    auto clipParam = std::make_unique<juce::AudioParameterFloat>("CLIPPOS", "Threshold",
         juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     auto clipParamNeg = std::make_unique<juce::AudioParameterFloat>("CLIPNEG", "Threshold",
         juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     //filter stuff: feel free to mess around with cutoff params, i just used arbitrary bounds
-    auto highPassParam = std::make_unique<juce::AudioParameterFloat>("HIGH", "High Cutoff",
-        juce::NormalisableRange<float>(800.0f,23000.0f, 4.0f), 1220.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
-    auto lowPassParam = std::make_unique<juce::AudioParameterFloat>("LOW", "Low Cutoff",
+    auto highPassParam = std::make_unique<juce::AudioParameterFloat>("HIGH(Hz)", "High Cutoff",
+        juce::NormalisableRange<float>(800.0f,20000.0f, 4.0f), 1220.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+    auto lowPassParam = std::make_unique<juce::AudioParameterFloat>("LOW(Hz)", "Low Cutoff",
         juce::NormalisableRange<float>(20.0f, 2000.0f, 4.0f), 250.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     juce::StringArray choices;
     choices.add("Soft");
