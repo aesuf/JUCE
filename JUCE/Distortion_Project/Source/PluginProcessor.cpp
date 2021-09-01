@@ -355,7 +355,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
         juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     //filter stuff: feel free to mess around with cutoff params, i just used arbitrary bounds
     auto highPassParam = std::make_unique<juce::AudioParameterFloat>("HIGH(Hz)", "High Cutoff",
-        juce::NormalisableRange<float>(800.0f,20000.0f, 4.0f), 1220.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+        juce::NormalisableRange<float>(100.0f,20000.0f, 4.0f), 1220.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     auto lowPassParam = std::make_unique<juce::AudioParameterFloat>("LOW(Hz)", "Low Cutoff",
         juce::NormalisableRange<float>(20.0f, 2000.0f, 4.0f), 250.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     juce::StringArray choices;
