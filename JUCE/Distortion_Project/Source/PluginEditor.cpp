@@ -363,8 +363,15 @@ void mySlider::mouseDown(const juce::MouseEvent& e)
         m.addItem(1, "Do something Here");
         //m.addItem(2, "item 2");
 
-        const int result = m.show();
-
+        const int result = 0;   // https://github.com/juce-framework/JUCE/blob/master/modules/juce_events/messages/juce_MessageManager.h 
+                                // => Latest commit fe4ba90 on June 30; "Set the default value of JUCE_MODAL_LOOPS_PERMITTED to 0"
+                                // Is possibly stopping JUCE 6.1.0+ from using  
+                                //m.show();
+                                // Considering:
+                                // => https ://github.com/juce-framework/JUCE/blob/6.1.0/modules/juce_gui_basics/menus/juce_PopupMenu.cpp
+                                //     => #if JUCE_MODAL_LOOPS_PERMITTED { int PopupMenu::show(...){...} }
+                                // Deactivating for now     -Xavier Esteve
+                                // Edit: Confirmed? https://github.com/juce-framework/JUCE/commit/fe4ba9071be037bbed58268e1f4139f1dd23e15c#comments
         if (result == 0)
         {
             // user dismissed the menu without picking anything
