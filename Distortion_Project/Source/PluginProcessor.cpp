@@ -106,8 +106,20 @@ void Distortion_ProjectAudioProcessor::prepareToPlay (double sampleRate, int sam
     update();
     reset();
     isActive = true;
+   
+    highPass.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+    lowPass.setType(juce::dsp::StateVariableTPTFilterType::lowpass); 
+    //highPass.setResonance(3.2);syntax for setting resonance if you want to for some reason
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
+
+    highPass.prepare(spec);
+    lowPass.prepare(spec);
     
 }
+
 
 void Distortion_ProjectAudioProcessor::releaseResources()
 {
@@ -176,11 +188,14 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     //driveNormal.applyGain(buffer, buffer.getNumSamples());
     //clipNormal.applyGain(buffer, buffer.getNumSamples());
     inGainNormal.applyGain(buffer, buffer.getNumSamples());
-
+    //Highpass filtering
+    juce::dsp::AudioBlock <float> block1(buffer);
+    highPass.process(juce::dsp::ProcessContextReplacing<float>(block1));
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-
+       
+        
         //Soft Clip
         if (typeNormal == 0.0)
         {
@@ -206,11 +221,19 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
                 float val = channelData[i] * driveNormal.getCurrentValue();
-                val = (4 * pow(val, 3) - 3 * val) + (2 * pow(val, 2) - 1) + val + 1;
-                channelData[i] = juce::jlimit(-1.f,1.f,val);
+                float a = clipNormal.getCurrentValue() / 4;
+                float b = 0.5 - a;
+                float c = clipNeg.getCurrentValue() / 4;
+                float d = 0.5 - c;
+
+                val = (4 * pow(val, 3) - 3 * val)*c + (2 * pow(val, 2) - 1)*b + val*c + 1*d;
+                channelData[i] = tanh(val);
             }
         }
     }
+    //lowpass filtering
+    juce::dsp::AudioBlock <float> block(buffer);
+    lowPass.process(juce::dsp::ProcessContextReplacing<float>(block));
     outGainNormal.applyGain(buffer, buffer.getNumSamples());
     visualiser.pushBuffer(buffer);
 }
@@ -272,11 +295,11 @@ void Distortion_ProjectAudioProcessor::update()
     auto type = apvts.getRawParameterValue("TYPE");
     typeNormal = type->load();
 
-    auto clip = apvts.getRawParameterValue("CLIP");
-    clipNormal = juce::Decibels::decibelsToGain(clip->load());
+    auto clip = apvts.getRawParameterValue("CLIPPOS");
+    clipNormal = clip->load();
 
     auto clipneg = apvts.getRawParameterValue("CLIPNEG");
-    clipNeg = juce::Decibels::decibelsToGain(clipneg->load());
+    clipNeg = clipneg->load();
 
 
     auto inGain = apvts.getRawParameterValue("INGAIN");
@@ -284,6 +307,11 @@ void Distortion_ProjectAudioProcessor::update()
 
     auto outGain = apvts.getRawParameterValue("OUTGAIN");
     outGainNormal.setTargetValue(juce::Decibels::decibelsToGain(outGain->load()));
+   //filter stuff
+    auto high = apvts.getRawParameterValue("HIGH(Hz)");
+    highPass.setCutoffFrequency(high->load());
+    auto low = apvts.getRawParameterValue("LOW(Hz)");
+    lowPass.setCutoffFrequency(low->load());
 }
 
 void Distortion_ProjectAudioProcessor::reset()
@@ -294,6 +322,9 @@ void Distortion_ProjectAudioProcessor::reset()
     outGainNormal.reset(getSampleRate(), 0.050);
     clipNeg.reset(getSampleRate(), 0.050);
     visualiser.clear();
+    highPass.reset();
+    lowPass.reset();
+    
 }
 
 //==============================================================================
@@ -323,12 +354,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
 
     auto driveParam = std::make_unique<juce::AudioParameterFloat>("DRIVE", "Drive",
         juce::NormalisableRange<float>(0.0f, 100.0f, 0.1f), 20.0f, "%", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
-    auto clipParam = std::make_unique<juce::AudioParameterFloat>("CLIP", "Threshold",
-        juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+    auto clipParam = std::make_unique<juce::AudioParameterFloat>("CLIPPOS", "Threshold",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 1.0f, "Gain", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     auto clipParamNeg = std::make_unique<juce::AudioParameterFloat>("CLIPNEG", "Threshold",
-        juce::NormalisableRange<float>(-40.0f, 0.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
-
-
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 1.0f, "Gain", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+        //filter stuff: feel free to mess around with cutoff params, i just used arbitrary bounds
+    auto highPassParam = std::make_unique<juce::AudioParameterFloat>("HIGH(Hz)", "High Cutoff",
+        juce::NormalisableRange<float>(100.0f,10000.0f, 4.0f), 1000.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+    auto lowPassParam = std::make_unique<juce::AudioParameterFloat>("LOW(Hz)", "Low Cutoff",
+        juce::NormalisableRange<float>(20.0f, 2000.0f, 4.0f), 1000.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     juce::StringArray choices;
     choices.add("Soft");
     choices.add("Hard");
@@ -342,6 +376,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
     params.push_back(std::move(clipParam));
     params.push_back(std::move(typeParam));
     params.push_back(std::move(clipParamNeg));
+    params.push_back(std::move(highPassParam));
+    params.push_back(std::move(lowPassParam));
 
     
     

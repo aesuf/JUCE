@@ -38,8 +38,8 @@ public:
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    
     void releaseResources() override;
-
    #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
    #endif
@@ -74,7 +74,6 @@ public:
     void prepare(double sampleRate, int samplesPerBlock); // Pass sample rate/buffer size to DSP
     void update(); // Update DSP when a user changes parameters
     void reset() override; // Reset DSP parameters
-
     juce::AudioProcessorValueTreeState apvts; //Create APVTS object to connect to editor
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     Visualiser visualiser;
@@ -87,7 +86,13 @@ private:
     juce::LinearSmoothedValue<float> driveNormal { 0.0 };
     juce::LinearSmoothedValue<float> clipNormal { 0.0 };
     juce::LinearSmoothedValue<float> clipNeg{ 0.0 };
-
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> hiPassCutoffFrequency{};
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> lowPassCutoffFrequency{};
+    juce::dsp::StateVariableTPTFilter<float> highPass;
+    
+    juce::dsp::StateVariableTPTFilter<float> lowPass;
+    
+    //juce::dsp::ProcessSpec processSpec;
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override
     {
         ignoreUnused(property);
