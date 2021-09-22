@@ -10,6 +10,9 @@
 
 #include <JuceHeader.h>
 
+#define MAXDEL_S 5
+#define MAX_FS 96000
+
 //==============================================================================
 /**
 */
@@ -89,8 +92,15 @@ private:
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> hiPassCutoffFrequency{};
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> lowPassCutoffFrequency{};
     juce::dsp::StateVariableTPTFilter<float> highPass;
-    
     juce::dsp::StateVariableTPTFilter<float> lowPass;
+    juce::LinearSmoothedValue<float> DelGain{ 0.0 };
+    juce::LinearSmoothedValue<float> DelAmnt{ 0.0 };
+    float in_del_buf[MAXDEL_S * MAX_FS];
+    int buf_size = MAXDEL_S * MAX_FS;
+    int readIndex = 0;
+    int writeIndex = 0;
+    int buf_inc(int,int);
+    int buf_dec_am(int,int,int);
     
     //juce::dsp::ProcessSpec processSpec;
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override
