@@ -93,14 +93,18 @@ private:
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> lowPassCutoffFrequency{};
     juce::dsp::StateVariableTPTFilter<float> highPass;
     juce::dsp::StateVariableTPTFilter<float> lowPass;
-    juce::LinearSmoothedValue<float> DelGain{ 0.0 };
-    juce::LinearSmoothedValue<float> DelAmnt{ 0.0 };
-    float in_del_buf[MAXDEL_S * MAX_FS];
+    juce::LinearSmoothedValue<float> DelGainL{ 0.0 };
+    juce::LinearSmoothedValue<float> DelAmntL{ 0.0 };
+    juce::LinearSmoothedValue<float> DelGainR{ 0.0 };
+    juce::LinearSmoothedValue<float> DelAmntR{ 0.0 };
+    float del_buf[MAXDEL_S * MAX_FS][2];
     int buf_size = MAXDEL_S * MAX_FS;
-    int readIndex = 0;
-    int writeIndex = 0;
+    int readIndex[2] = { 0 };
+    int writeIndex[2] = { 0 };
     int buf_inc(int,int);
     int buf_dec_am(int,int,int);
+    //float Get_Gain(int);
+    //float Get_Delay(int);
     
     //juce::dsp::ProcessSpec processSpec;
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override

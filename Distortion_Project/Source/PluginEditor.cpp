@@ -80,19 +80,35 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     lowPassSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
 
     //DelayGain colors
-    DelayGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayGainSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
-    DelayGainSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+    DelayGainLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    DelayGainLSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayGainLSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayGain style and position
-    DelayGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    DelayGainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+    DelayGainLSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DelayGainLSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     //DelayAmount colors
-    DelayAmountSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayAmountSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
-    DelayAmountSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+    DelayAmountLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    DelayAmountLSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayAmountLSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayAmount style and position
-    DelayAmountSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    DelayAmountSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+    DelayAmountLSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DelayAmountLSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+
+
+    //DelayGain colors
+    DelayGainRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    DelayGainRSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayGainRSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+    //DelayGain style and position
+    DelayGainRSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DelayGainRSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
+    //DelayAmount colors
+    DelayAmountRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    DelayAmountRSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayAmountRSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+    //DelayAmount style and position
+    DelayAmountRSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    DelayAmountRSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     
     // Add items to ComboBox
     typeBox.addItem("Soft", 1);
@@ -112,8 +128,10 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     addAndMakeVisible(clipSliderNeg);
     addAndMakeVisible(highPassSlider);
     addAndMakeVisible(lowPassSlider);
-    addAndMakeVisible(DelayGainSlider);
-    addAndMakeVisible(DelayAmountSlider);
+    addAndMakeVisible(DelayGainLSlider);
+    addAndMakeVisible(DelayAmountLSlider);
+    addAndMakeVisible(DelayGainRSlider);
+    addAndMakeVisible(DelayAmountRSlider);
     
     // Add Listeners 
     inGainSlider.addListener(this);
@@ -124,8 +142,10 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     typeBox.addListener(this); //typeBox requires listener
     highPassSlider.addListener(this);
     lowPassSlider.addListener(this);
-    DelayGainSlider.addListener(this);
-    DelayAmountSlider.addListener(this);
+    DelayGainLSlider.addListener(this);
+    DelayAmountLSlider.addListener(this);
+    DelayGainRSlider.addListener(this);
+    DelayAmountRSlider.addListener(this);
     //
     driveSlider.addMouseListener(this, false);
     
@@ -137,8 +157,10 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     clipSliderNeg.setLookAndFeel(&otherLookAndFeel);
     highPassSlider.setLookAndFeel(&otherLookAndFeel);
     lowPassSlider.setLookAndFeel(&otherLookAndFeel);
-    DelayGainSlider.setLookAndFeel(&otherLookAndFeel);
-    DelayAmountSlider.setLookAndFeel(&otherLookAndFeel);
+    DelayGainLSlider.setLookAndFeel(&otherLookAndFeel);
+    DelayAmountLSlider.setLookAndFeel(&otherLookAndFeel);
+    DelayGainRSlider.setLookAndFeel(&otherLookAndFeel);
+    DelayAmountRSlider.setLookAndFeel(&otherLookAndFeel);
     
     //Pimpl(Slider & s, SliderStyle sliderStyle, TextEntryBoxPosition textBoxPosition)
     
@@ -161,14 +183,18 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
         "HIGH(Hz)", highPassSlider);
     lowPassSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "LOW(Hz)", lowPassSlider);
-    DelayGainSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
-        "DELGAIN", DelayGainSlider);
-    DelayAmountSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
-        "DELAMNT", DelayAmountSlider);
+    DelayGainLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "DELGAINL", DelayGainLSlider);
+    DelayAmountLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "DELAMNTL", DelayAmountLSlider);
+    DelayGainLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "DELGAINR", DelayGainRSlider);
+    DelayAmountLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+        "DELAMNTR", DelayAmountRSlider);
 
     // Make sure that before the constructor has finished, you've set the	
     // editor's size to whatever you need it to be.	
-    setSize(800, 600); /*CHANGE SIZE HERE*/
+    setSize(1000, 750); /*CHANGE SIZE HERE*/
 }
 
 // Editor Destructor
@@ -181,8 +207,10 @@ Distortion_ProjectAudioProcessorEditor::~Distortion_ProjectAudioProcessorEditor(
     clipSliderNeg.setLookAndFeel(nullptr);
     highPassSlider.setLookAndFeel(nullptr);
     lowPassSlider.setLookAndFeel(nullptr);
-    DelayGainSlider.setLookAndFeel(nullptr);
-    DelayAmountSlider.setLookAndFeel(nullptr);
+    DelayGainLSlider.setLookAndFeel(nullptr);
+    DelayAmountLSlider.setLookAndFeel(nullptr);
+    DelayGainRSlider.setLookAndFeel(nullptr);
+    DelayAmountRSlider.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -201,15 +229,17 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 
     // Text for Sliders 
     // **********************************(Should change these to labels!!)**********************************************
-    g.drawText("INGAIN", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
-    g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPPOS", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPNEG", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("HIGH(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("LOW(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("DELGAIN", ((getWidth() / 5) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("DELAMNT", ((getWidth() / 5) * 3) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("INGAIN", ((getWidth() / 6) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
+    g.drawText("DRIVE", ((getWidth() / 6) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIPPOS", ((getWidth() / 6) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("OUTGAIN", ((getWidth() / 6) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIPNEG", ((getWidth() / 6) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("HIGH(Hz)", ((getWidth() / 6) * 5) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("LOW(Hz)", ((getWidth() / 6) * 5) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("DELGAINL", ((getWidth() / 6) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("DELAMNTL", ((getWidth() / 6) * 3) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("DELGAINR", ((getWidth() / 6) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("DELAMNTR", ((getWidth() / 6) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
@@ -228,23 +258,27 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 void Distortion_ProjectAudioProcessorEditor::resized()
 {   
     // Slider Bounds
-    inGainSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+    inGainSlider.setBounds(((getWidth() / 6) * 1) - (100 / 2),
         (getHeight() / 4) - (100 / 2), 100, 100);
-    driveSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2),
+    driveSlider.setBounds(((getWidth() / 6) * 2) - (100 / 2),
         (getHeight() / 4) - (100 / 2), 100, 100);
-    clipSlider.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+    clipSlider.setBounds(((getWidth() / 6) * 1) - (100 / 2),
         (getHeight() / 2) - (100 / 2), 100, 100);  
-    outGainSlider.setBounds(((getWidth() / 5) * 2) - (100 / 2), 
+    outGainSlider.setBounds(((getWidth() / 6) * 2) - (100 / 2), 
         (getHeight() / 2) - (100 / 2), 100, 100);
-    clipSliderNeg.setBounds(((getWidth() / 5) * 1) - (100 / 2),
+    clipSliderNeg.setBounds(((getWidth() / 6) * 1) - (100 / 2),
         (getHeight() / 1.4) - (100 / 2), 100, 100);
-    highPassSlider.setBounds(((getWidth() / 5) * 4) - (100 / 2),
+    highPassSlider.setBounds(((getWidth() / 6) * 5) - (100 / 2),
         (getHeight() / 2) - (100 / 2), 100, 100);
-    lowPassSlider.setBounds(((getWidth() / 5) * 4) - (100 / 2),
+    lowPassSlider.setBounds(((getWidth() / 6) * 5) - (100 / 2),
         (getHeight() / 1.4) - (100 / 2), 100, 100);
-    DelayGainSlider.setBounds(((getWidth() / 5) * 3) - (100 / 2),
+    DelayGainLSlider.setBounds(((getWidth() / 6) * 3) - (100 / 2),
         (getHeight() / 2) - (100 / 2), 100, 100);
-    DelayAmountSlider.setBounds(((getWidth() / 5) * 3) - (100 / 2),
+    DelayAmountLSlider.setBounds(((getWidth() / 6) * 3) - (100 / 2),
+        (getHeight() / 1.4) - (100 / 2), 100, 100);
+    DelayGainRSlider.setBounds(((getWidth() / 6) * 4) - (100 / 2),
+        (getHeight() / 2) - (100 / 2), 100, 100);
+    DelayAmountRSlider.setBounds(((getWidth() / 6) * 4) - (100 / 2),
         (getHeight() / 1.4) - (100 / 2), 100, 100);
     // ComboBox Bounds
     juce::Rectangle<int> area = getLocalBounds().reduced(60);
@@ -275,8 +309,10 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
     float clipValueNeg = static_cast<float>(((clipSliderNeg.getValue() + 40.0) / 20.0) * 0.2 + 0.5);
     float highPassValue = static_cast<float>(((highPassSlider.getValue()))); //lisp moment ????
     float lowPassValue = static_cast<float>(((lowPassSlider.getValue())));
-    float DelayGainValue = static_cast<float>(((DelayGainSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
-    float DelayAmountValue = static_cast<float>(((DelayAmountSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float DelayGainLValue = static_cast<float>(((DelayGainLSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float DelayAmountLValue = static_cast<float>(((DelayAmountLSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float DelayGainRValue = static_cast<float>(((DelayGainRSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
+    float DelayAmountRValue = static_cast<float>(((DelayAmountRSlider.getValue() + 40.0) / 80.0) * 0.2 + 0.5);
     // Limit Brightness between specific range
     //float driveBrightness = juce::jlimit(0.5f, 0.7f, driveValue); 
     //float clipBrightness = juce::jlimit(0.5f, 0.7f, clipValue);
@@ -299,10 +335,14 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
         juce::Colour::Colour(0.52f, 0.4f, highPassValue, 1.0f));
     lowPassSlider.setColour(juce::Slider::rotarySliderFillColourId,
         juce::Colour::Colour(0.52f, 0.4f, lowPassValue, 1.0f));
-    DelayGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayGainValue, 1.0f));
-    DelayAmountSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayAmountValue, 1.0f));
+    DelayGainLSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, DelayGainLValue, 1.0f));
+    DelayAmountLSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, DelayAmountLValue, 1.0f));
+    DelayGainRSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, DelayGainRValue, 1.0f));
+    DelayAmountRSlider.setColour(juce::Slider::rotarySliderFillColourId,
+        juce::Colour::Colour(0.52f, 0.4f, DelayAmountRValue, 1.0f));
 }
 
 // Default Constructor
