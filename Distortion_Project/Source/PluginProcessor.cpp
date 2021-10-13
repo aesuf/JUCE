@@ -194,7 +194,7 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     //Highpass filtering
     juce::dsp::AudioBlock <float> block1(buffer);
     highPass.process(juce::dsp::ProcessContextReplacing<float>(block1));
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)   
     {
         auto* channelData = buffer.getWritePointer(channel);
         int fs = AudioProcessor::getSampleRate();
@@ -205,9 +205,10 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
                 readIndex = buf_dec_am(writeIndex, DelAmnt.getCurrentValue()*fs, buf_size); //calculate read index
-                float val = channelData[i] + DelGain.getCurrentValue()*in_del_buf[readIndex]; //add delayed audio data
-                in_del_buf[writeIndex] = channelData[i]; //write output to delay buffer
+                float gain = DelGain.getCurrentValue()/100.0f;
+                float val = channelData[i]/2 + gain *in_del_buf[readIndex]/2; //add delayed audio data
                 channelData[i] = (2.f / juce::float_Pi) * atan(val * driveNormal.getCurrentValue()); //apply distortion
+                in_del_buf[writeIndex] = gain*channelData[i]; //write output to delay buffer
                 
                 writeIndex = buf_inc(writeIndex, buf_size); //update write index for delay buffer
             }
@@ -218,10 +219,11 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
                 readIndex = buf_dec_am(writeIndex, DelAmnt.getCurrentValue() * fs, buf_size); //calculate read index
-                float val = channelData[i] * driveNormal.getCurrentValue() + DelGain.getCurrentValue() * in_del_buf[readIndex];;
-                in_del_buf[writeIndex] = channelData[i]; //write output to delay buffer
+                float gain = DelGain.getCurrentValue() / 100.0f;
+                float val = channelData[i] * driveNormal.getCurrentValue() + gain * in_del_buf[readIndex];;
                 channelData[i] = juce::jlimit(-1 * clipNeg.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val); //Apply distortion
-                
+                in_del_buf[writeIndex] = channelData[i]; //write output to delay buffer
+
                 writeIndex = buf_inc(writeIndex, buf_size); //update write index for delay buffer
             }
         }
@@ -232,16 +234,17 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             for (auto i = 0; i < buffer.getNumSamples(); i++)
             {
                 readIndex = buf_dec_am(writeIndex, DelAmnt.getCurrentValue() * fs, buf_size); //calculate read index
-                float val = channelData[i] * driveNormal.getCurrentValue() + DelGain.getCurrentValue() * in_del_buf[readIndex]; //Apply distortion
+                float gain = DelGain.getCurrentValue() / 100.0f;
+                float val = channelData[i] * driveNormal.getCurrentValue() + gain * in_del_buf[readIndex]; //Apply distortion
                 float a = clipNormal.getCurrentValue() / 4;
                 float b = 0.5 - a;
                 float c = clipNeg.getCurrentValue() / 4;
                 float d = 0.5 - c;
 
                 val = (4 * pow(val, 3) - 3 * val)*c + (2 * pow(val, 2) - 1)*b + val*c + 1*d;
-                in_del_buf[writeIndex] = channelData[i]; //write output to delay buffer
                 channelData[i] = tanh(val);
-                
+                in_del_buf[writeIndex] = channelData[i]; //write output to delay buffer
+
                 writeIndex = buf_inc(writeIndex, buf_size); //update write index for delay buffer
             }
         }
@@ -330,8 +333,13 @@ void Distortion_ProjectAudioProcessor::update()
     //delay stuff
     auto DelG = apvts.getRawParameterValue("DELGAIN");
     DelGain = DelG->load();
+    //DelGain.setTargetValue(juce::Decibels::decibelsToGain(DelG->load()));
     auto DelA = apvts.getRawParameterValue("DELAMNT");
     DelAmnt = DelA->load();
+
+    /*DelGain.setTargetValue(juce::Decibels::decibelsToGain(DelG->load()));
+    auto DelA = apvts.getRawParameterValue("DELAMNT");
+    DelAmnt.setTargetValue(juce::Decibels::decibelsToGain(DelA->load()));*/
 }
 
 void Distortion_ProjectAudioProcessor::reset()
@@ -386,9 +394,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
         juce::NormalisableRange<float>(20.0f, 2000.0f, 4.0f), 1000.0f, "Hz", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     //Delay Stuff
     auto DelGainParam = std::make_unique<juce::AudioParameterFloat>("DELGAIN", "Delay Gain",
-        juce::NormalisableRange<float>(-40.0f, 40.0f, 0.1f), 0.0f, "dB", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+        juce::NormalisableRange<float>(0.0f, 100.0f, 0.1f), 25.0f, "%", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     auto DelAmntParam = std::make_unique<juce::AudioParameterFloat>("DELAMNT", "Delay Amount",
-        juce::NormalisableRange<float>(0.0f, 5.0f, 0.01f), 1.0f, "Seconds", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.25f, "Seconds", juce::AudioProcessorParameter::genericParameter, valueToTextFunction, textToValueFunction);
     juce::StringArray choices;
     choices.add("Soft");
     choices.add("Hard");
