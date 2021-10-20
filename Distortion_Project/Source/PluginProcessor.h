@@ -97,14 +97,12 @@ private:
     juce::LinearSmoothedValue<float> DelAmntL{ 0.0 };
     juce::LinearSmoothedValue<float> DelGainR{ 0.0 };
     juce::LinearSmoothedValue<float> DelAmntR{ 0.0 };
-    float del_buf[MAXDEL_S * MAX_FS][2];
-    int buf_size = MAXDEL_S * MAX_FS;
-    int readIndex[2] = { 0 };
-    int writeIndex[2] = { 0 };
-    int buf_inc(int,int);
-    int buf_dec_am(int,int,int);
-    //float Get_Gain(int);
-    //float Get_Delay(int);
+
+    void fillBuffer(int channel, int bufferSize, int delayBufferSize, float* channelData);
+    void feedbackBuffer(int channel, int bufferSize, int delayBufferSize, float* channelData);
+    void readFromBuffer(int channel, int writePosition, juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& delayBuffer);
+    juce::AudioBuffer<float> delayBuffer;
+    int writePosition{ 0 };
     
     //juce::dsp::ProcessSpec processSpec;
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override

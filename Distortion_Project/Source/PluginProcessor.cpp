@@ -110,6 +110,9 @@ void Distortion_ProjectAudioProcessor::prepareToPlay (double sampleRate, int sam
     reset();
     isActive = true;
    
+    auto delayBufferSize = sampleRate * 2.0;
+    delayBuffer.setSize(getTotalNumOutputChannels(), (int)delayBufferSize);
+
     highPass.setType(juce::dsp::StateVariableTPTFilterType::highpass);
     lowPass.setType(juce::dsp::StateVariableTPTFilterType::lowpass); 
     //highPass.setResonance(3.2);syntax for setting resonance if you want to for some reason
@@ -188,17 +191,25 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    //driveNormal.applyGain(buffer, buffer.getNumSamples());
-    //clipNormal.applyGain(buffer, buffer.getNumSamples());
+
+    auto bufferSize = buffer.getNumSamples();
+    auto delayBufferSize = delayBuffer.getNumSamples();
+
+
     inGainNormal.applyGain(buffer, buffer.getNumSamples());
-    //Highpass filtering
+/*    //Highpass filtering
     juce::dsp::AudioBlock <float> block1(buffer);
-    highPass.process(juce::dsp::ProcessContextReplacing<float>(block1));
+    highPass.process(juce::dsp::ProcessContextReplacing<float>(block1));*/
     for (int channel = 0; channel < totalNumInputChannels; ++channel)   
     {
+
         auto* channelData = buffer.getWritePointer(channel);
         int fs = AudioProcessor::getSampleRate();
-        
+
+        fillBuffer(channel, bufferSize, delayBufferSize, channelData);
+        readFromBuffer(channel, writePosition, buffer, delayBuffer);
+        feedbackBuffer(channel, bufferSize, delayBufferSize, channelData);
+        /*
         //Soft Clip
         if (typeNormal == 0.0)
         {
@@ -217,12 +228,11 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
                     delay = DelAmntR.getCurrentValue();
 
 
-                readIndex[channel] = buf_dec_am(writeIndex[channel], delay*fs, buf_size); //calculate read index
-                //float gain = Get_Gain(channel);
-                float val = channelData[i] + gain*del_buf[readIndex[channel]][channel]; //add delayed audio data
-                channelData[i] = (2.f / juce::float_Pi) * atan(val * driveNormal.getCurrentValue()); //apply distortion
-                del_buf[writeIndex[channel]][channel] = channelData[i]; //write output to delay buffer                
-                writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); //update write index for delay buffer
+                //readIndex[channel] = buf_dec_am(writeIndex[channel], delay*fs, buf_size); //calculate read index
+                float val = channelData[i] * driveNormal.getCurrentValue();// +gain * del_buf[readIndex[channel]][channel]; //add delayed audio data
+                channelData[i] = (2.f / juce::float_Pi) * atan(val); //apply distortion
+                //del_buf[writeIndex[channel]][channel] = channelData[i]; //write output to delay buffer                
+                //writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); //update write index for delay buffer
             }
         }
         //Hard Clip
@@ -242,12 +252,16 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
                 else
                     delay = DelAmntR.getCurrentValue();
 
-
-                readIndex[channel] = buf_dec_am(writeIndex[channel], delay*fs, buf_size); //calculate read index
+                //calculate read index
+                readIndex[channel] = buf_dec_am(writeIndex[channel], delay*fs, buf_size); 
+                //Apply Delay
                 float val = channelData[i] * driveNormal.getCurrentValue() + gain*del_buf[readIndex[channel]][channel];
-                channelData[i] = juce::jlimit(-1 * clipNeg.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val); //Apply distortion
-                del_buf[writeIndex[channel]][channel] = channelData[i]; //write output to delay buffer
-                writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); //update write index for delay buffer
+                //Apply distortion
+                channelData[i] = juce::jlimit(-1 * clipNeg.getCurrentValue(), 1 * clipNormal.getCurrentValue(), val); 
+                //write output to delay buffer
+                del_buf[writeIndex[channel]][channel] = channelData[i]; 
+                //update write index for delay buffer
+                writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); 
             }
         }
       
@@ -281,13 +295,101 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
                 del_buf[writeIndex[channel]][channel] = channelData[i]; //write output to delay buffer
                 writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); //update write index for delay buffer
             }
-        }
+        }*/
     }
-    //lowpass filtering
+    writePosition += bufferSize; //Update where we write to buffer
+    writePosition %= delayBufferSize;
+
+    /*//lowpass filtering
     juce::dsp::AudioBlock <float> block(buffer);
     lowPass.process(juce::dsp::ProcessContextReplacing<float>(block));
     outGainNormal.applyGain(buffer, buffer.getNumSamples());
-    visualiser.pushBuffer(buffer);
+    visualiser.pushBuffer(buffer);*/
+}
+
+
+/*
+Info on AudioBuffer taken from https://www.youtube.com/watch?v=2oCb3SXBcTI
+Thanks Audio Programmer :) 
+*/
+
+void Distortion_ProjectAudioProcessor::fillBuffer(int channel, int bufferSize, int delayBufferSize, float* channelData)
+{
+    // Check to see if main buffer copies to delay buffer without needing to wrap...
+    if (delayBufferSize > bufferSize + writePosition)
+    {
+        // copy main buffer contents to delay buffer
+        delayBuffer.copyFrom(channel, writePosition, channelData, bufferSize);
+    }
+    // if no
+    else
+    {
+        // Determine how much space is left at the end of the delay buffer
+        auto numSamplesToEnd = delayBufferSize - writePosition;
+
+        // Copy that amount of contents to the end...
+        delayBuffer.copyFrom(channel, writePosition, channelData, numSamplesToEnd);
+
+        // Calculate how much contents is remaining to copy
+        auto numSamplesAtStart = bufferSize - numSamplesToEnd;
+
+        // Copy remaining amount to beginning of delay buffer
+        delayBuffer.copyFrom(channel, 0, channelData + numSamplesToEnd, numSamplesAtStart);
+    }
+}
+
+void Distortion_ProjectAudioProcessor::feedbackBuffer(int channel, int bufferSize, int delayBufferSize, float* channelData)
+{
+    float gain = DelGainL.getCurrentValue()/100.0f;
+    //float gain = juce::Decibels::decibelsToGain(feedback);
+
+    // Check to see if main buffer copies to delay buffer without needing to wrap...
+    if (delayBufferSize > bufferSize + writePosition)
+    {
+        // copy main buffer contents to delay buffer
+        delayBuffer.addFrom(channel, writePosition, channelData, bufferSize, gain);
+    }
+    // if no
+    else
+    {
+        // Determine how much space is left at the end of the delay buffer
+        auto numSamplesToEnd = delayBufferSize - writePosition;
+
+        // Copy that amount of contents to the end...
+        delayBuffer.addFrom(channel, writePosition, channelData, numSamplesToEnd, gain);
+
+        // Calculate how much contents is remaining to copy
+        auto numSamplesAtStart = bufferSize - numSamplesToEnd;
+
+        // Copy remaining amount to beginning of delay buffer
+        delayBuffer.addFrom(channel, 0, channelData + numSamplesToEnd, numSamplesAtStart, gain);
+    }
+}
+
+void Distortion_ProjectAudioProcessor::readFromBuffer(int channel, int writePosition, juce::AudioBuffer<float>& buffer, juce::AudioBuffer<float>& delayBuffer)
+{
+    auto bufferSize = buffer.getNumSamples();
+    auto delayBufferSize = delayBuffer.getNumSamples();
+    auto gain = 0.5f;
+    float delayInSec = DelAmntL.getCurrentValue();
+    auto readPosition = std::floor(writePosition - (getSampleRate() * delayInSec));
+
+    if (readPosition < 0)
+        readPosition += delayBufferSize;
+
+    // Copy delayed data from the past to main buffer
+    if (readPosition + bufferSize <= delayBufferSize)
+    {
+        buffer.addFrom(channel, 0, delayBuffer.getReadPointer(channel, readPosition), bufferSize, gain);
+    }
+    else
+    {
+        auto numSamplesToEnd = delayBufferSize - readPosition;
+        buffer.addFrom(channel, 0, delayBuffer.getReadPointer(channel, readPosition), numSamplesToEnd, gain);
+
+        auto numSamplesAtStart = bufferSize - numSamplesToEnd;
+        buffer.addFrom(channel, numSamplesToEnd, delayBuffer.getReadPointer(channel, 0), numSamplesAtStart, gain);
+    }
 }
 
 //==============================================================================
@@ -465,6 +567,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
     return { params.begin(), params.end() };
 }
 
+/*
 //Used to increment index of circular buffer
 int Distortion_ProjectAudioProcessor::buf_inc(int index, int buf_len)
 {
@@ -488,7 +591,7 @@ int Distortion_ProjectAudioProcessor::buf_dec_am(int index, int amount, int buf_
     }
     return index;
 }
-
+*/
 /*
 float Get_Gain(int channel)
 {
