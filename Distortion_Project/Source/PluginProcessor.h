@@ -84,6 +84,7 @@ private:
     bool isActive{ false };
     bool mustUpdateProcessing{ false };
     float typeNormal { 0.0 };
+    float typeDelay{ 0.0 };
     juce::LinearSmoothedValue<float> inGainNormal{ 0.0 };
     juce::LinearSmoothedValue<float> outGainNormal { 0.0 };
     juce::LinearSmoothedValue<float> driveNormal { 0.0 };

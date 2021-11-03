@@ -90,6 +90,7 @@ private:
     mySlider DelayGainRSlider;
     mySlider DelayAmountRSlider;
     juce::ComboBox typeBox;
+    juce::ComboBox delayBox;
 
     // Create Label Objects
     juce::Label titleLabel;
@@ -102,6 +103,7 @@ private:
     // Create GUI attachment objects to connect to APVTS object in processor
     std::unique_ptr<SliderAttachments> driveSliderAttachment;
     std::unique_ptr<BoxAttachments> typeBoxAttachment;
+    std::unique_ptr<BoxAttachments> delayBoxAttachment;
     std::unique_ptr<SliderAttachments> clipSliderAttachment;
     std::unique_ptr<SliderAttachments> inGainSliderAttachment;
     std::unique_ptr<SliderAttachments> outGainSliderAttachment;

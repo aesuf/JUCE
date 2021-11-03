@@ -116,12 +116,17 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     typeBox.addItem("Chebyshev", 3);
     typeBox.setJustificationType(juce::Justification::centred);  
 
+    delayBox.addItem("Stereo Delay", 1);
+    delayBox.addItem("Ping-Pong Delay", 2);
+    delayBox.setJustificationType(juce::Justification::centredBottom);
+
     // Add components to GUI	
     addAndMakeVisible(driveSlider);
     addAndMakeVisible(clipSlider);
     addAndMakeVisible(inGainSlider);
     addAndMakeVisible(outGainSlider);
     addAndMakeVisible(&typeBox);
+    addAndMakeVisible(&delayBox);
     addAndMakeVisible(titleLabel);
     addAndMakeVisible(NameLabel);
     addAndMakeVisible(audioProcessor.visualiser);
@@ -140,6 +145,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     clipSlider.addListener(this); 
     clipSliderNeg.addListener(this);
     typeBox.addListener(this); //typeBox requires listener
+    delayBox.addListener(this);
     highPassSlider.addListener(this);
     lowPassSlider.addListener(this);
     DelayGainLSlider.addListener(this);
@@ -174,6 +180,8 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
         "DRIVE", driveSlider);
     typeBoxAttachment = std::make_unique<BoxAttachments>(audioProcessor.apvts,
         "TYPE", typeBox);
+    delayBoxAttachment = std::make_unique<BoxAttachments>(audioProcessor.apvts,
+        "DELAYTYPE", delayBox);
     clipSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "CLIPPOS", clipSlider);
     //added for experimentation 
@@ -187,9 +195,9 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
         "DELGAINL", DelayGainLSlider);
     DelayAmountLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "DELAMNTL", DelayAmountLSlider);
-    DelayGainLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+    DelayGainRSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "DELGAINR", DelayGainRSlider);
-    DelayAmountLSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
+    DelayAmountRSliderAttachment = std::make_unique<SliderAttachments>(audioProcessor.apvts,
         "DELAMNTR", DelayAmountRSlider);
 
     // Make sure that before the constructor has finished, you've set the	
@@ -283,6 +291,7 @@ void Distortion_ProjectAudioProcessorEditor::resized()
     // ComboBox Bounds
     juce::Rectangle<int> area = getLocalBounds().reduced(60);
     typeBox.setBounds(area.removeFromTop(20));
+    delayBox.setBounds(area.removeFromBottom(20));
 
     // Label Bounds
     titleLabel.setBounds(10, 10, getWidth() - 20, 30);
