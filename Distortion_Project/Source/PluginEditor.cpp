@@ -19,10 +19,11 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     getLookAndFeel().setDefaultSansSerifTypefaceName("Roboto");
     getLookAndFeel().setColour(juce::Slider::textBoxTextColourId, juce::Colours::antiquewhite);
     getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::transparentWhite);
-
+    auto sliderOutlineColor = juce::Colour(0.6305555555f, 0.38f, 1.0f, 0.3f);
+    auto fillColor = juce::Colour(0.633333f, 1.0f, .7f, 1.0f);
     // inGainSlider Colours
-    inGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    inGainSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    inGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    inGainSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     inGainSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
 
     // inGainSliderStyle and position
@@ -30,8 +31,8 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     inGainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
 
     // outGainSlider Colours
-    outGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    outGainSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    outGainSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    outGainSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     outGainSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
 
     // outGainSlider Style and position
@@ -39,56 +40,57 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     outGainSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 2 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
 
     // driveSlider Colours
-    driveSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    driveSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f,0.7f,1.0f));
+    driveSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    driveSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     driveSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
 
     // driveSlider Style and position
     driveSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    driveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 2 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);	
+    driveSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 2 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
 
     // clipSlider Colours
-    clipSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    clipSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    clipSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    clipSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     clipSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
-    
+
     // clipSlider Style and position
     clipSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     clipSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 5) * 1 - 25), (getHeight() / 4) + 5 - (25 / 2))), true, 50, 25);
-    
+
     // clipSliderNeg Colours added for experimentation 
-    clipSliderNeg.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    clipSliderNeg.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    clipSliderNeg.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    clipSliderNeg.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     clipSliderNeg.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
+
 
     // clipSliderNeg Style and position
     clipSliderNeg.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     clipSliderNeg.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     //highPassSlider colors
-    highPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    highPassSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    highPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour(0.52f, 0.4f, 0.3f, 1.0f));
+    highPassSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0.52f, 0.4f, 0.7f, 1.0f));
     highPassSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //highPassSlider style and position
     highPassSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     highPassSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 1) + 5 - (25 / 2))), true, 50, 25);
     //lowPassSlider colors
-    lowPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    lowPassSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    lowPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    lowPassSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     lowPassSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //LO2PassSlider style and position
     lowPassSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     lowPassSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
 
     //DelayGain colors
-    DelayGainLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayGainLSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayGainLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    DelayGainLSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     DelayGainLSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayGain style and position
     DelayGainLSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DelayGainLSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     //DelayAmount colors
-    DelayAmountLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayAmountLSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayAmountLSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    DelayAmountLSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     DelayAmountLSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayAmount style and position
     DelayAmountLSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -96,15 +98,15 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
 
 
     //DelayGain colors
-    DelayGainRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayGainRSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayGainRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    DelayGainRSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     DelayGainRSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayGain style and position
     DelayGainRSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     DelayGainRSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     //DelayAmount colors
-    DelayAmountRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    DelayAmountRSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    DelayAmountRSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    DelayAmountRSlider.setColour(juce::Slider::rotarySliderFillColourId,fillColor);
     DelayAmountRSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //DelayAmount style and position
     DelayAmountRSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -309,6 +311,11 @@ void Distortion_ProjectAudioProcessorEditor::comboBoxChanged(juce::ComboBox* box
 // Listener function for Slider
 void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* slide)
 {
+    auto getFillColor = [](auto _sliderValue) { return
+        // Colour(float Hue, float Saturation, float Brightness, float Alpha)
+        juce::Colour(0.633333f, 1.0f, _sliderValue, 1.0f);
+
+    };
     ignoreUnused(slide);
     // Get Values of sliders
     float driveValue = static_cast<float>(((driveSlider.getValue()/100.0)*0.2)+0.5);
@@ -331,27 +338,27 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
     // Set Brightness Parameter of the Colour
     // Colour(float Hue, float Saturation, float Brightness, float Alpha)
     driveSlider.setColour(juce::Slider::rotarySliderFillColourId, 
-        juce::Colour::Colour(0.52f, 0.4f, driveValue, 1.0f));
+        getFillColor(driveValue));
     clipSlider.setColour(juce::Slider::rotarySliderFillColourId, 
-        juce::Colour::Colour(0.52f, 0.4f,clipValue, 1.0f));
+        getFillColor(clipValue));
     inGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, inGainValue, 1.0f));
+        getFillColor(inGainValue));
     outGainSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, outGainValue, 1.0f));
+        getFillColor(outGainValue));
     clipSliderNeg.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, clipValueNeg, 1.0f));
+        getFillColor(clipValueNeg));
     highPassSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, highPassValue, 1.0f));
+        getFillColor(highPassValue));
     lowPassSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, lowPassValue, 1.0f));
+        getFillColor(lowPassValue));
     DelayGainLSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayGainLValue, 1.0f));
+        getFillColor(DelayGainLValue));
     DelayAmountLSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayAmountLValue, 1.0f));
+        getFillColor(DelayAmountLValue));
     DelayGainRSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayGainRValue, 1.0f));
+        getFillColor(DelayGainRValue));
     DelayAmountRSlider.setColour(juce::Slider::rotarySliderFillColourId,
-        juce::Colour::Colour(0.52f, 0.4f, DelayAmountRValue, 1.0f));
+        getFillColor(DelayAmountRValue));
 }
 
 // Default Constructor
@@ -412,9 +419,8 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
         g.setColour(fill);
         g.strokePath(valueArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-        // Set the colour of the Ellipse to be drawn
-        // Colour(float Hue, float Saturation, float Brightness, float Alpha)
-        g.setColour(juce::Colour::Colour(0.52f, 0.4f, 0.19f, 0.6f));
+        //COLOR OF THE ORANGE CIRCLE!!!!
+        g.setColour(juce::Colour(250, 70, 22));
 
         // Set the bounds of the ellipse to be just inside the arc line of the slider
         // This is the bounds of the slider reduced by the linewidth (see the beginning of this function)
@@ -423,6 +429,22 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
         // Create a filled ellipse with the new bounds
         // fillEllipse(float x, float y, float width, float height)
         g.fillEllipse(ellipseBounds.getX(), ellipseBounds.getY(), ellipseBounds.getWidth(), ellipseBounds.getHeight());
+    
+        //The stick thing
+        juce::Path p;
+        auto pointerLength = radius * 0.68f;
+        auto pointerThickness = 4.5f;
+        //raduis if you want to change where the stick rotates from
+        // add nothing and it will extend to the outline
+        p.addRectangle(-pointerThickness * 0.5f, -radius + 6.8, pointerThickness, pointerLength);
+        p.applyTransform(juce::AffineTransform::rotation(toAngle).translated(bounds.getCentreX(), bounds.getCentreY()));
+        g.setColour(juce::Colour(6, 7, 41));
+        g.fillPath(p);
+        auto shadow = juce::DropShadow();
+        shadow.drawForPath(g, p);
+    
+    
+    
     }
 
     // This is the thumb of the slider, the circle at the end, or indicator point
@@ -431,7 +453,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
         bounds.getCentreY() + arcRadius * std::sin(toAngle - juce::MathConstants<float>::halfPi));
 
     // Sets the color of the slider thumb
-    g.setColour(slider.findColour(juce::Slider::thumbColourId));
+    g.setColour(juce::Colours::darkorange);
     g.fillEllipse(juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
 }
 
