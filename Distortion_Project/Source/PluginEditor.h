@@ -61,7 +61,7 @@ public:
 
 
     void comboBoxChanged(juce::ComboBox*) override; //Combo box function
-    void sliderValueChanged(juce::Slider*); // Slider function
+    void sliderValueChanged(juce::Slider*) override; // Slider function
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -73,7 +73,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     Distortion_ProjectAudioProcessor& audioProcessor;
-
+    
+    juce::Typeface::Ptr tface = juce::Typeface::createSystemTypefaceFor(BinaryData::GloriaHallelujahRegular_ttf, BinaryData::GloriaHallelujahRegular_ttfSize);
     // LookandFeel classes need to be implemented before the component
     OtherLookAndFeel otherLookAndFeel;
 

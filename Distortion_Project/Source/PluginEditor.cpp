@@ -10,15 +10,22 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h" 
 
+
+
+
+
+
 //==============================================================================
 Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (Distortion_ProjectAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     
     // General Font and Colour Settings
-    getLookAndFeel().setDefaultSansSerifTypefaceName("Roboto");
-    getLookAndFeel().setColour(juce::Slider::textBoxTextColourId, juce::Colours::antiquewhite);
-    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colours::transparentWhite);
+    getLookAndFeel().setDefaultSansSerifTypeface(tface);
+    getLookAndFeel().getComboBoxFont(typeBox).setHeight(35);
+    
+
+
     
     //outline color for all the sliders
     auto sliderOutlineColor = juce::Colour(0.6305555555f, 0.38f, 1.0f, 0.3f);
@@ -87,6 +94,8 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     lowPassSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 4 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     
     // Add items to ComboBox
+
+    
     typeBox.addItem("Soft", 1);
     typeBox.addItem("Hard", 2);
     typeBox.addItem("Chebyshev", 3);
@@ -175,33 +184,40 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     g.setGradientFill(g1);
     g.fillAll();
 
-    // Set font colour and size
+    // Set font colour and size and typeface
+    auto gFont = juce::Font(tface);
+    gFont.setHeight(35);
+    g.setFont(gFont);
     g.setColour(juce::Colours::whitesmoke);
-    g.setFont(20.0f);
-    
     
      
     // Text for Sliders 
     //ß **********************************(Should change these to labels!!)**********************************************
-    g.drawText("INGAIN", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
-    g.drawText("DRIVE", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPPOS", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("OUTGAIN", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPNEG", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("HIGH(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("LOW(Hz)", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("ingain", ((getWidth() / 5) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
+    g.drawText("drive", ((getWidth() / 5) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
+    g.drawText("clip pos", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("outgain", ((getWidth() / 5) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("clipneg", ((getWidth() / 5) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("high", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("low", ((getWidth() / 5) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::right);
 
     // Label for Name of Plugin
-    NameLabel.setFont(juce::Font(25.0f, juce::Font::bold));
-    NameLabel.setText("Distortion Multieffect", juce::dontSendNotification);
-    NameLabel.setJustificationType(juce::Justification::left);
-
-
+    auto nameFont = juce::Font(tface);
+    nameFont.setBold(true);
+    nameFont.setHeight(45);
+    NameLabel.setFont(nameFont);
     
+    NameLabel.setText("distortion multieffect", juce::dontSendNotification);
+    NameLabel.setJustificationType(juce::Justification::left);
+    //shadow for visualizer
+    //if you change visualizer size, change this since its hardcoded
+    auto visualizerRect = juce::Rectangle<int>(getWidth()-getWidth()/2, 100, getWidth() / 3, 150);
+    auto shadow = juce::DropShadow();
+    shadow.drawForRectangle(g,visualizerRect);
 }
 
 // Layout of subcomponents in editor
@@ -229,8 +245,9 @@ void Distortion_ProjectAudioProcessorEditor::resized()
     // Label Bounds
     titleLabel.setBounds(10, 10, getWidth() - 20, 30);
     NameLabel.setBounds(10, 10, getWidth() - 20, 30);
-
+    
     audioProcessor.visualiser.setBounds(getWidth()-getWidth()/2, 100, getWidth() / 3, 150);
+    
 }
 
 // Listener Function for ComboBox (Code is purposefully empty...)
@@ -287,6 +304,7 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
 // Default Constructor
 OtherLookAndFeel::OtherLookAndFeel()
 {
+  
 }
 
 // Destructor
@@ -301,6 +319,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
 
     // When copying code from pre-made juce functions, you need to add 
     // the juce namespace to the front of the objects!!
+    auto shadow = juce::DropShadow();
     auto outline = slider.findColour(juce::Slider::rotarySliderOutlineColourId);
     auto fill = slider.findColour(juce::Slider::rotarySliderFillColourId);
 
@@ -326,7 +345,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
 
     g.setColour(outline);
     g.strokePath(backgroundArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
+    shadow.drawForPath(g,backgroundArc);
     if (slider.isEnabled())
     {
         juce::Path valueArc;
@@ -341,7 +360,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
 
         g.setColour(fill);
         g.strokePath(valueArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
+        shadow.drawForPath(g,valueArc);
         //COLOR OF THE ORANGE CIRCLE!!!!
         g.setColour(juce::Colour(250,70,22));
 
@@ -350,9 +369,10 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
         auto ellipseBounds = juce::Rectangle<int>(x, y, width, height).toFloat().reduced(10+lineW);
 
         // Create a filled ellipse with the new bounds
+        
         // fillEllipse(float x, float y, float width, float height)
         g.fillEllipse(ellipseBounds.getX(), ellipseBounds.getY(), ellipseBounds.getWidth(), ellipseBounds.getHeight());
-        
+       
         //The stick thing
         juce::Path p;
            auto pointerLength = radius * 0.68f;
@@ -363,7 +383,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
            p.applyTransform (juce::AffineTransform::rotation (toAngle).translated (bounds.getCentreX(), bounds.getCentreY()));
         g.setColour (juce::Colour(6, 7, 41));
                 g.fillPath (p);
-        auto shadow = juce::DropShadow();
+        
         shadow.drawForPath(g,p);
     }
 
@@ -376,7 +396,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
     g.setColour(juce::Colours::darkorange);
     g.fillEllipse(juce::Rectangle<float>(thumbWidth, thumbWidth).withCentre(thumbPoint));
     
-
+    
 }
 
 mySlider::mySlider()
