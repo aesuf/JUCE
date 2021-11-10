@@ -23,7 +23,7 @@ public:
     {
         setBufferSize(128);
         setSamplesPerBlock(16);
-        setColours(juce::Colours::dimgrey, juce::Colours::antiquewhite);
+        setColours(juce::Colour(20,120,136), juce::Colour(0x2a,0xf8,0x2c));
         setRepaintRate(16);
     }
 private:

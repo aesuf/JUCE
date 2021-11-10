@@ -256,8 +256,8 @@ void Distortion_ProjectAudioProcessor::processBlock (juce::AudioBuffer<float>& b
                 float c = clipNeg.getCurrentValue() / 4;
                 float d = 0.5 - c;
                 val = tanh(val);
-                channelData[i] = (4 * pow(val, 3) - 3 * val)*c + (2 * pow(val, 2) - 1)*b + val*c + 1*d;
-                
+                channelData[i] = 2 * (.5 - a) * pow(val, 2) - 2 * a * val + 4 * a * pow(val, 3);
+
                 //del_buf[writeIndex[channel]][channel] = channelData[i]; //write output to delay buffer
                 //writeIndex[channel] = buf_inc(writeIndex[channel], buf_size); //update write index for delay buffer
             }
@@ -359,7 +359,7 @@ void Distortion_ProjectAudioProcessor::readFromBuffer(int channel, int writePosi
     if (readPosition < 0)
         readPosition += delayBufferSize;
 
-    if (typeDelay == 1.0) //Switch channels when ping-pong (This is kindy janky idk why)
+    if (typeDelay == 1.0) //Switch channels when ping-pong (This is kindy janky idk why; not a bug its a feature)
     {
         if (channel == 0)
             channel = 1;
@@ -547,7 +547,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Distortion_ProjectAudioProce
 
     juce::StringArray delayChoices;
     delayChoices.add("Stereo Delay");
-    delayChoices.add("Ping-Pong Delay");
+    delayChoices.add("Van Gogh Delay");
     auto delayTypeParam = std::make_unique<juce::AudioParameterChoice>("DELAYTYPE", "TypeDelay", delayChoices, 0, "TypeDelay", valueToTextFunction, textToValueFunction);
 
     params.push_back(std::move(inGainParam));

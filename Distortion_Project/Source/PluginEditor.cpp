@@ -67,8 +67,8 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     clipSliderNeg.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     clipSliderNeg.setTextBoxStyle(juce::Slider::TextEntryBoxPosition((((getWidth() / 3) * 1 - 25), (getHeight() / 2) + 5 - (25 / 2))), true, 50, 25);
     //highPassSlider colors
-    highPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colour(0.52f, 0.4f, 0.3f, 1.0f));
-    highPassSlider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colour(0.52f, 0.4f, 0.7f, 1.0f));
+    highPassSlider.setColour(juce::Slider::rotarySliderOutlineColourId, sliderOutlineColor);
+    highPassSlider.setColour(juce::Slider::rotarySliderFillColourId, fillColor);
     highPassSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::transparentWhite);
     //highPassSlider style and position
     highPassSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -119,7 +119,7 @@ Distortion_ProjectAudioProcessorEditor::Distortion_ProjectAudioProcessorEditor (
     typeBox.setJustificationType(juce::Justification::centred);  
 
     delayBox.addItem("Stereo Delay", 1);
-    delayBox.addItem("Ping-Pong Delay", 2);
+    delayBox.addItem("Van Gogh Delay", 2);
     delayBox.setJustificationType(juce::Justification::centredBottom);
 
     // Add components to GUI	
@@ -229,9 +229,11 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     // Color Gradient for Background
     juce::Colour colorAqua = juce::Colour(0.52f, 0.4f, 0.2f, 0.8f);
     juce::Colour colorBlack = juce::Colours::black;
+    juce::Colour colorTest = juce::Colour(0x0e, 0x2f, 0x44);
     juce::ColourGradient g1 = juce::ColourGradient(colorAqua, 0.0f, 0.0f, colorBlack.brighter(0.2f), static_cast<float>(getRight()), static_cast<float>(getBottom()), true);
     g.setGradientFill(g1);
-    g.fillAll();
+    //g.fillAll();
+    g.fillAll(colorTest);
 
     // Set font colour and size
     g.setColour(juce::Colours::whitesmoke);
@@ -239,17 +241,20 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
 
     // Text for Sliders 
     // **********************************(Should change these to labels!!)**********************************************
-    g.drawText("INGAIN", ((getWidth() / 6) * 1) - driveSlider.getWidth()/2, (getHeight() / 4) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
-    g.drawText("DRIVE", ((getWidth() / 6) * 2) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPPOS", ((getWidth() / 6) * 1) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("INGAIN", ((getWidth() / 6) * 1) - driveSlider.getWidth()/2, (getHeight() / 2) + driveSlider.getHeight()/20, 100, 100, juce::Justification::centred, false);
+    g.drawText("DRIVE", ((getWidth() / 6) *1.5) - driveSlider.getWidth() / 2, (getHeight() / 4) + driveSlider.getHeight() / 20, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIPPOS", ((getWidth() / 6) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("OUTGAIN", ((getWidth() / 6) * 2) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
-    g.drawText("CLIPNEG", ((getWidth() / 6) * 1) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+    g.drawText("CLIPNEG", ((getWidth() / 6) * 2) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("HIGH(Hz)", ((getWidth() / 6) * 5) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("LOW(Hz)", ((getWidth() / 6) * 5) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("DELGAINL", ((getWidth() / 6) * 3) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("DELAMNTL", ((getWidth() / 6) * 3) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("DELGAINR", ((getWidth() / 6) * 4) - (100 / 2), (getHeight() / 2) + 5, 100, 100, juce::Justification::centred, false);
     g.drawText("DELAMNTR", ((getWidth() / 6) * 4) - (100 / 2), (getHeight() / 1.38) + 5, 100, 100, juce::Justification::centred, false);
+
+    g.drawText("Left Channel", ((getWidth() / 10) * 9) - (100 / 2), (getHeight() / 10) * 1.2, 120, 100, juce::Justification::centred, false);
+    g.drawText("Right Channel", ((getWidth() / 10) * 9) - (100 / 2), (getHeight() / 10) * 2.2, 120, 100, juce::Justification::centred, false);
 
     // Label for Name of our Organization
     titleLabel.setText("U F A E S", juce::dontSendNotification);
@@ -260,8 +265,8 @@ void Distortion_ProjectAudioProcessorEditor::paint(juce::Graphics& g)
     NameLabel.setText("Distortion Multieffect", juce::dontSendNotification);
     NameLabel.setJustificationType(juce::Justification::left);
 
-
-    
+    //juce::Image image = juce::ImageFileFormat::loadFrom(juce::File("C:/Users/jacks/OneDrive/Desktop/Pictures/Wallpaper/356_1239_609a3cd2_ic1805nb_ederL.jpg"));
+    //g.drawImageAt(image, 0, 0, false);
 }
 
 // Layout of subcomponents in editor
@@ -269,14 +274,14 @@ void Distortion_ProjectAudioProcessorEditor::resized()
 {   
     // Slider Bounds
     inGainSlider.setBounds(((getWidth() / 6) * 1) - (100 / 2),
-        (getHeight() / 4) - (100 / 2), 100, 100);
-    driveSlider.setBounds(((getWidth() / 6) * 2) - (100 / 2),
+        (getHeight() / 2) - (100 / 2), 100, 100);
+    driveSlider.setBounds(((getWidth() / 6) * 1.5) - (100 / 2),
         (getHeight() / 4) - (100 / 2), 100, 100);
     clipSlider.setBounds(((getWidth() / 6) * 1) - (100 / 2),
-        (getHeight() / 2) - (100 / 2), 100, 100);  
+        (getHeight() / 1.4) - (100 / 2), 100, 100);  
     outGainSlider.setBounds(((getWidth() / 6) * 2) - (100 / 2), 
         (getHeight() / 2) - (100 / 2), 100, 100);
-    clipSliderNeg.setBounds(((getWidth() / 6) * 1) - (100 / 2),
+    clipSliderNeg.setBounds(((getWidth() / 6) * 2) - (100 / 2),
         (getHeight() / 1.4) - (100 / 2), 100, 100);
     highPassSlider.setBounds(((getWidth() / 6) * 5) - (100 / 2),
         (getHeight() / 2) - (100 / 2), 100, 100);
@@ -313,7 +318,9 @@ void Distortion_ProjectAudioProcessorEditor::sliderValueChanged(juce::Slider* sl
 {
     auto getFillColor = [](auto _sliderValue) { return
         // Colour(float Hue, float Saturation, float Brightness, float Alpha)
-        juce::Colour(0.633333f, 1.0f, _sliderValue, 1.0f);
+        //juce::Colour(0.633333f, 1.0f, _sliderValue, 1.0f);
+        juce::Colour(250, 70, 22);//getFillColor(driveValue));
+        //juce::Colour(250, 70, _sliderValue, 1.0f);
 
     };
     ignoreUnused(slide);
@@ -420,7 +427,7 @@ void OtherLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wid
         g.strokePath(valueArc, juce::PathStrokeType(lineW, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
         //COLOR OF THE ORANGE CIRCLE!!!!
-        g.setColour(juce::Colour(250, 70, 22));
+        g.setColour(juce::Colour(0.633333f, 1.0f, .7f, 1.0f));
 
         // Set the bounds of the ellipse to be just inside the arc line of the slider
         // This is the bounds of the slider reduced by the linewidth (see the beginning of this function)
